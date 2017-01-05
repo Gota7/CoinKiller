@@ -2,7 +2,6 @@
 #define OBJECTRENDERER_H
 
 #include "objects.h"
-#include "tileset.h"
 
 #include <QPainter>
 
@@ -19,7 +18,7 @@ class SpriteRenderer: public ObjectRenderer
 {
 public:
     SpriteRenderer() {}
-    SpriteRenderer(const Sprite *spr, Tileset *tilesets[]);
+    SpriteRenderer(const Sprite *spr);
     void render(QPainter *painter);
 protected:
     const Sprite *spr;
@@ -53,37 +52,74 @@ protected:
 
 // Special Sprite Renderers
 
-// Sprite 18: Tile God
-class TileGodRenderer: public SpriteRenderer
+// Lava
+class LavaRenderer: public SpriteRenderer
 {
 public:
-    TileGodRenderer(const Sprite *spr, Tileset *tileset);
-    void render(QPainter *painter);
-protected:
-    const Sprite *spr;
-    Tileset *tileset;
-private:
-    int tileIds [12] = { 27, 20, 15, 24, 23, 23, 19, 41, 101, 94, 105, 131 };
-};
-
-// Sprite 22: Special Exit Controller
-class SpecialExitControllerRenderer: public SpriteRenderer
-{
-public:
-    SpecialExitControllerRenderer(const Sprite *spr);
+    LavaRenderer(const Sprite *spr);
     void render(QPainter *painter);
 protected:
     const Sprite *spr;
 };
 
-// Sprite 94: Flipper (One way gate)
-class FlipperRenderer: public SpriteRenderer
+// Poison
+class PoisonRenderer: public SpriteRenderer
 {
 public:
-    FlipperRenderer(const Sprite *spr);
+    PoisonRenderer(const Sprite *spr);
     void render(QPainter *painter);
 protected:
-    NormalImageRenderer *img;
+    const Sprite *spr;
+};
+
+// Water
+class WaterRenderer: public SpriteRenderer
+{
+public:
+    WaterRenderer(const Sprite *spr);
+    void render(QPainter *painter);
+protected:
+    const Sprite *spr;
+};
+
+// Sprite 38 Reznor Wheel
+class ReznorRenderer: public SpriteRenderer
+{
+public:
+    ReznorRenderer(const Sprite *spr);
+    void render(QPainter *painter);
+protected:
+    const Sprite *spr;
+};
+
+// Sprite 39 Rez Plat
+class PlatRenderer: public SpriteRenderer
+{
+public:
+    PlatRenderer(const Sprite *spr);
+    void render(QPainter *painter);
+protected:
+    const Sprite *spr;
+};
+
+// Sprite 68: Pipe Enemy
+class PipeEnemyRenderer: public SpriteRenderer
+{
+public:
+    PipeEnemyRenderer(const Sprite *spr);
+    void render(QPainter *painter);
+protected:
+    const Sprite *spr;
+};
+
+// Sprite 78: FRICKEN FLAMETHROWER
+class FireBarRenderer: public SpriteRenderer
+{
+public:
+    FireBarRenderer(const Sprite *spr);
+    void render(QPainter *painter);
+protected:
+    const Sprite *spr;
 };
 
 // Sprite 97: End of Level Flag
@@ -151,16 +187,6 @@ protected:
     const Sprite *spr;
 };
 
-// Sprite 136: Bone Goomba
-class BoneGoombaRenderer: public SpriteRenderer
-{
-public:
-    BoneGoombaRenderer(const Sprite *spr);
-    void render(QPainter *painter);
-protected:
-    const Sprite *spr;
-};
-
 // Sprite 139: Goomba Tower
 class GoombaTowerRenderer: public ObjectRenderer
 {
@@ -174,26 +200,17 @@ protected:
     NormalImageRenderer *bottom;
 };
 
-// Sprite 147: 3 Plat Rickshaw
-class ThreePlatRickRenderer: public ObjectRenderer
+// Sprite 213: Pokey
+class PokeyRenderer: public ObjectRenderer
 {
 public:
-    ThreePlatRickRenderer(const Sprite *spr);
+    PokeyRenderer(const Sprite *spr);
     void render(QPainter *painter);
 protected:
     const Object *obj;
-    NormalImageRenderer *img;
-};
-
-// Sprite 154: 4 Plat Rickshaw
-class FourPlatRickRenderer: public ObjectRenderer
-{
-public:
-    FourPlatRickRenderer(const Sprite *spr);
-    void render(QPainter *painter);
-protected:
-    const Object *obj;
-    NormalImageRenderer *img;
+    NormalImageRenderer *top;
+    QList<NormalImageRenderer*> middle;
+    NormalImageRenderer *bottom;
 };
 
 // Sprite 165: Koopa Troopa
@@ -201,6 +218,28 @@ class KoopaTroopaRenderer: public ObjectRenderer
 {
 public:
     KoopaTroopaRenderer(const Sprite *spr);
+    void render(QPainter *painter);
+protected:
+    const Object *obj;
+    NormalImageRenderer *img;
+};
+
+// Sprite 165: Koopa Troopa
+class KoopaParatroopaRenderer: public ObjectRenderer
+{
+public:
+    KoopaParatroopaRenderer(const Sprite *spr);
+    void render(QPainter *painter);
+protected:
+    const Object *obj;
+    NormalImageRenderer *img;
+};
+
+// Sprite 165: Koopa Troopa Gen
+class KoopaParatroopaGenRenderer: public ObjectRenderer
+{
+public:
+    KoopaParatroopaGenRenderer(const Sprite *spr);
     void render(QPainter *painter);
 protected:
     const Object *obj;
@@ -217,6 +256,16 @@ protected:
     const Sprite *spr;
     QString path;
     int sideOffset = 0;
+};
+
+// Sprite 212 Roy's Balls
+class BallsRenderer: public SpriteRenderer
+{
+public:
+    BallsRenderer(const Sprite *spr);
+    void render(QPainter *painter);
+protected:
+    const Sprite *spr;
 };
 
 // Sprite 215: Bob-omb Cannon
@@ -241,6 +290,16 @@ protected:
     NormalImageRenderer *img;
 };
 
+// Sprite 239: Lemmy Mushroom
+class LMRenderer: public SpriteRenderer
+{
+public:
+    LMRenderer(const Sprite *spr);
+    void render(QPainter *painter);
+protected:
+    const Sprite *spr;
+};
+
 // Sprite 240: Urchin
 class UrchinRenderer: public SpriteRenderer
 {
@@ -251,11 +310,11 @@ protected:
     const Sprite *spr;
 };
 
-// Sprite 244: Chain Chomp
-class ChainChompRenderer: public SpriteRenderer
+// Sprite 253 Larry Platform
+class LarryPlatformRenderer: public SpriteRenderer
 {
 public:
-    ChainChompRenderer(const Sprite *spr);
+    LarryPlatformRenderer(const Sprite *spr);
     void render(QPainter *painter);
 protected:
     const Sprite *spr;
@@ -280,17 +339,6 @@ public:
     void render(QPainter *painter);
 protected:
     const Sprite *spr;
-};
-
-// Sprite 134: Ruins Plat Rickshaw
-class RuinsRickRenderer: public ObjectRenderer
-{
-public:
-    RuinsRickRenderer(const Sprite *spr);
-    void render(QPainter *painter);
-protected:
-    const Object *obj;
-    NormalImageRenderer *img;
 };
 
 class EntranceRenderer : public ObjectRenderer

@@ -63,9 +63,9 @@ int LevelManager::addArea(int id)
     if (getAreaCount() >= 4)
             throw std::runtime_error("Adding area to level failed: Exceeded maximum area count (4).");
 
-    QFile new_course(QCoreApplication::applicationDirPath() + "/coinkiller_data/blank_course.bin");
+    QFile new_course(QCoreApplication::applicationDirPath() + "/CoinKiller_data/blank_course.bin");
     if(!new_course.open(QIODevice::ReadOnly))
-        throw std::runtime_error("Blank course file is missing or failed to open (/coinkiller_data/blank_course.bin)");
+        throw std::runtime_error("Blank course file is missing or failed to open (/CoinKiller_data/blank_course.bin)");
 
     int newAreaId = id+1;
 

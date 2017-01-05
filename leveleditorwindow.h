@@ -24,7 +24,6 @@
 
 #include "filesystem.h"
 #include "levelview.h"
-#include "levelminimap.h"
 #include "ctpk.h"
 #include "levelmanager.h"
 #include "areaeditorwidget.h"
@@ -57,6 +56,7 @@ public slots:
     void deselect();
     void updateEditors();
     void scrollTo(int x, int y);
+    void on_actionLiquid_triggered(bool toggle);
 
 private slots:
     void on_actionToggleLayer1_toggled(bool arg1);
@@ -107,6 +107,8 @@ private slots:
 
     void handleMgrUpdate();
 
+    void on_actionLemmy_Mode_triggered();
+
 private:
     Ui::LevelEditorWindow *ui;
 
@@ -117,7 +119,6 @@ private:
     Level* level;
     Tileset* tileset;
     LevelView* levelView;
-    LevelMiniMap* miniMap;
 
     PropertyGrid* propGrid;
 

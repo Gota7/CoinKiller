@@ -1,5 +1,5 @@
-#ifndef GAME_H
-#define GAME_H
+#ifndef MGame_H
+#define MGame_H
 
 #include "filesystem.h"
 #include "tileset.h"
@@ -9,10 +9,10 @@
 #include <QStandardItemModel>
 #include <QtXml>
 
-class Game
+class MGame
 {
 public:
-    Game(FilesystemBase* fs, SettingsManager* settingsMgr);
+    MGame(FilesystemBase* fs, SettingsManager* settingsMgr);
 
 
     Tileset* getTileset(QString name);
@@ -31,4 +31,4 @@ private:
 
 };
 
-#endif // GAME_H
+#endif // MGame_H

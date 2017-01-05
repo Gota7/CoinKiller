@@ -130,13 +130,6 @@ quint64 MemoryFile::size()
 
 bool MemoryFile::resize(quint64 size)
 {
-    if (size == 0)
-    {
-        delete[] this->data;
-        this->data = NULL;
-        this->_size = 0;
-    }
-
     if (size < 1 || size > 0xFFFFFFFF)
         return false;
 

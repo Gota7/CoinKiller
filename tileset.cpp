@@ -30,7 +30,7 @@ Tileset::Tileset(Game *game, QString name)
 
     texImage = texture->getTexture(0);
 
-    if (name.startsWith("J_"))
+    if (name == "J_Kihon" || name == "J_Chika" || name == "J_Gold" || name == "J_Setsugen" || name == "J_Suichu" || name == "J_Yougan")
         drawOverrides = true;
 
     // parse the object def
@@ -243,11 +243,15 @@ void Tileset::drawTile(QPainter& painter, TileGrid& grid, int num, int x, int y,
 
     if (drawOverrides)
     {
-        QString basePath(QCoreApplication::applicationDirPath() + "/coinkiller_data/tileoverrides/");
+        QString basePath(QCoreApplication::applicationDirPath() + "/CoinKiller_data/tileoverrides/");
 
         int xx = num % 21;
         int yy = num /21;
 
+        //if (xx == 5 && yy == 0) { painter.drawPixmap(rdst, QPixmap(basePath + "invisible.png")); return; }
+        if (xx == 1 && yy == 0) { painter.drawPixmap(rdst, QPixmap(basePath + "invisible.png")); return; }
+        //if (xx == 2 && yy == 0) { painter.drawPixmap(rdst, QPixmap(basePath + "invisible.png")); return; }
+        //if (xx == 3 && yy == 0) { painter.drawPixmap(rdst, QPixmap(basePath + "invisible.png")); return; }
         if (xx == 15 && yy == 0) { painter.drawPixmap(rdst, QPixmap(basePath + "coin.png")); return; }
         if (xx == 16 && yy == 0) { painter.drawPixmap(rdst, QPixmap(basePath + "blue_coin.png")); return; }
         if (xx == 10 && yy == 3) { painter.drawPixmap(rdst, QPixmap(basePath + "vine.png")); return; }
@@ -260,7 +264,7 @@ void Tileset::drawTile(QPainter& painter, TileGrid& grid, int num, int x, int y,
     grid[gridid] = grid[0xFFFFFFFF];
 
     // Draw Overlays
-    QString basePath(QCoreApplication::applicationDirPath() + "/coinkiller_data/tileoverlays/");
+    QString basePath(QCoreApplication::applicationDirPath() + "/CoinKiller_data/tileoverlays/");
 
     if (behaviors[num][0] == 0 && behaviors[num][2] == 1) // Beanstalk Stopper
         painter.drawPixmap(rdst, QPixmap(basePath + "beanstalk_stopper.png"));
@@ -389,14 +393,9 @@ void Tileset::drawRow(QPainter& painter, TileGrid& grid, ObjectDef& def, ObjectR
 
 void Tileset::drawObject(QPainter& painter, TileGrid& grid, int num, int x, int y, int w, int h, float zoom)
 {
-    if (num >= objectDefs.size())
+    if (num >= objectDefs.size()) // TODO handle properly
     {
-        QString warningImg(QCoreApplication::applicationDirPath() + "/coinkiller_data/tileoverrides/error.png");
-
-        for (int xx = 0; xx < w; xx++)
-            for (int yy = 0; yy < h; yy++)
-                painter.drawPixmap(QRect((x+xx)*20, (y+yy)*20, 20, 20), QPixmap(warningImg));
-
+        qDebug("!! BAD OBJ NUMBER %d\n", num);
         return;
     }
 

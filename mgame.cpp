@@ -1,20 +1,20 @@
-#include "game.h"
+#include "MGame.h"
 
 #include <QHash>
 
-Game::Game(FilesystemBase* fs, SettingsManager *settingsMgr)
+MGame::MGame(FilesystemBase* fs, SettingsManager *settingsMgr)
 {
     this->fs = fs;
     this->settingsMgr = settingsMgr;
 }
 
 
-Tileset* Game::getTileset(QString name)
+Tileset* MGame::getTileset(QString name)
 {
     return new Tileset(this, name);
 }
 
-LevelManager* Game::getLevelManager(QWidget* parent, QString path)
+LevelManager* MGame::getLevelManager(QWidget* parent, QString path)
 {
     path.prepend("/Course/");
     if (!path.endsWith(".sarc"))
@@ -26,7 +26,7 @@ LevelManager* Game::getLevelManager(QWidget* parent, QString path)
     return new LevelManager(parent, this, path);
 }
 
-LevelManager* Game::getFile(QWidget* parent, QString path)
+LevelManager* MGame::getFile(QWidget* parent, QString path)
 {
     if (!fs->fileExists(path))
         throw std::runtime_error("Level File does not exist.");
@@ -34,7 +34,7 @@ LevelManager* Game::getFile(QWidget* parent, QString path)
     return new LevelManager(parent, this, path);
 }
 
-QStandardItemModel* Game::getCourseModel()
+QStandardItemModel* MGame::getCourseModel()
 {
     QStandardItemModel* model = new QStandardItemModel();
 
@@ -50,7 +50,7 @@ QStandardItemModel* Game::getCourseModel()
     return model;
 }
 
-void Game::loadLevelNamesCat(QStandardItem* item, QDomElement node)
+void MGame::loadLevelNamesCat(QStandardItem* item, QDomElement node)
 {
     QDomElement element = node.firstChild().toElement();
     while (!element.isNull())
@@ -72,7 +72,7 @@ void Game::loadLevelNamesCat(QStandardItem* item, QDomElement node)
     }
 }
 
-QStandardItemModel* Game::getTilesetModel()
+QStandardItemModel* MGame::getTilesetModel()
 {
     QStandardItemModel* model = new QStandardItemModel();
     model->setColumnCount(2);
@@ -148,7 +148,7 @@ QStandardItemModel* Game::getTilesetModel()
     return model;
 }
 
-QStandardItemModel* Game::getTilesetModel(int id, bool includeNoneItem)
+QStandardItemModel* MGame::getTilesetModel(int id, bool includeNoneItem)
 {
     QStandardItemModel* model = new QStandardItemModel();
     model->setColumnCount(2);
@@ -156,7 +156,7 @@ QStandardItemModel* Game::getTilesetModel(int id, bool includeNoneItem)
     headers << "Tileset" << "Filename";
     model->setHorizontalHeaderLabels(headers);
 
-    QFile inputFile(QCoreApplication::applicationDirPath() + "/CoinKiller_data/tilesetnames.txt");
+    QFile inputFile(QCoreApplication::applicationDirPath() + "/RedKoin_data/tilesetnames.txt");
     if (!inputFile.open(QIODevice::ReadOnly))
         return model;
 

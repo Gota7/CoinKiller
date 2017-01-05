@@ -18,6 +18,7 @@
 #include "leveleditorwindow.h"
 #include "ui_leveleditorwindow.h"
 
+#include "levelview.h"
 #include "is.h"
 
 #include <QHBoxLayout>
@@ -27,6 +28,8 @@
 #include <QComboBox>
 #include <QMessageBox>
 #include <QScrollBar>
+
+bool ShowLiquid = true;
 
 LevelEditorWindow::LevelEditorWindow(LevelManager* lvlMgr, int initialArea, SettingsManager *settings) :
     QMainWindow(lvlMgr->getParent()),
@@ -44,7 +47,7 @@ LevelEditorWindow::LevelEditorWindow(LevelManager* lvlMgr, int initialArea, Sett
     connect(areaSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(handleAreaIndexChange(int)));
 
     // Load UI Icons
-    QString basePath(QCoreApplication::applicationDirPath() + "/coinkiller_data/icons/");
+    QString basePath(QCoreApplication::applicationDirPath() + "/CoinKiller_data/icons/");
     ui->actionZoom_In->setIcon(QIcon(basePath + "zoomin.png"));
     ui->actionZoom_Out->setIcon(QIcon(basePath + "zoomout.png"));
     ui->actionZoom_100->setIcon(QIcon(basePath + "zoom100.png"));
@@ -63,6 +66,7 @@ LevelEditorWindow::LevelEditorWindow(LevelManager* lvlMgr, int initialArea, Sett
     ui->actionGrid->setIcon(QIcon(basePath + "grid.png"));
     ui->actionAddArea->setIcon(QIcon(basePath + "add.png"));
     ui->actionDeleteCurrentArea->setIcon(QIcon(basePath + "remove.png"));
+    ui->actionLiquid->setIcon(QIcon(basePath + "liquid.png"));
 
     QList<int> derpshit;
     derpshit.append(350);
@@ -260,17 +264,43 @@ void LevelEditorWindow::on_actionLowerLayer_triggered()
     levelView->lowerLayer();
 }
 
+void LevelEditorWindow::on_actionLiquid_triggered(bool toggle)
+{
+
+    extern bool ShowLiquid;
+    if (ShowLiquid) {ShowLiquid=false;} else {ShowLiquid=true;}
+    update();
+    levelView->saveLevel();
+    close();
+
+}
+
+void LevelEditorWindow::on_actionLemmy_Mode_triggered()
+{
+
+    extern bool LemmyMode;
+    if (LemmyMode) {LemmyMode=false;} else {LemmyMode=true;}
+    QMessageBox::information(
+        this,
+        tr("A Message From Lemmy..."),
+        tr("LLLLLEEEEEEMMMMMMMAAAAAYYYYYY!!!!!!"));
+    update();
+    levelView->saveLevel();
+    close();
+
+}
+
 void LevelEditorWindow::on_actionFullscreen_toggled(bool toggle)
 {
     if (toggle)
     {
         showFullScreen();
-        ui->actionFullscreen->setIcon(QIcon(QCoreApplication::applicationDirPath() + "/coinkiller_data/icons/collapse.png"));
+        ui->actionFullscreen->setIcon(QIcon(QCoreApplication::applicationDirPath() + "/CoinKiller_data/icons/collapse.png"));
     }
     else
     {
         showNormal();
-        ui->actionFullscreen->setIcon(QIcon(QCoreApplication::applicationDirPath() + "/coinkiller_data/icons/expand.png"));
+        ui->actionFullscreen->setIcon(QIcon(QCoreApplication::applicationDirPath() + "/CoinKiller_data/icons/expand.png"));
     }
 }
 
@@ -414,7 +444,6 @@ void LevelEditorWindow::loadArea(int id, bool closeLevel, bool init)
     if (!init)
     {
         delete levelView;
-        delete miniMap;
 
         for(int i = ui->sidebarTabWidget->count() - 1; i >= 0; i--)
         {
@@ -430,6 +459,7 @@ void LevelEditorWindow::loadArea(int id, bool closeLevel, bool init)
     ui->levelViewArea->setWidget(levelView);
     levelView->setMinimumSize(4096*20, 4096*20);
     levelView->setMaximumSize(4096*20, 4096*20);
+    QWidget::showMaximized();
 
     layerMask = 0x7;
     ui->actionToggleLayer1->setChecked(true);
@@ -439,7 +469,7 @@ void LevelEditorWindow::loadArea(int id, bool closeLevel, bool init)
 
     zoom = 1.0;
 
-    QString basePath(QCoreApplication::applicationDirPath() + "/coinkiller_data/icons/");
+    QString basePath(QCoreApplication::applicationDirPath() + "/CoinKiller_data/icons/");
 
     // Setup Area Editor
     areaEditor = new AreaEditorWidget(level, lvlMgr->getGame());
@@ -493,13 +523,6 @@ void LevelEditorWindow::loadArea(int id, bool closeLevel, bool init)
     ui->sidebarTabWidget->addTab(locationEditor, QIcon(basePath + "location.png"), "");
     ui->sidebarTabWidget->addTab(pathEditor, QIcon(basePath + "path.png"), "");
     ui->sidebarTabWidget->addTab(progPathEditor, QIcon(basePath + "progress_path.png"), "");
-
-
-    miniMap = new LevelMiniMap(this, level);
-    connect(levelView, SIGNAL(updateMinimap(QRect)), miniMap, SLOT(update_(QRect)));
-    connect(levelView, SIGNAL(updateMinimapBounds()), miniMap, SLOT(updateBounds()));
-    connect(miniMap, SIGNAL(scrollTo(int,int)), this, SLOT(scrollTo(int,int)));
-    ui->miniMap->setWidget(miniMap);
 }
 
 void LevelEditorWindow::updateAreaSelector(int index)
@@ -560,8 +583,6 @@ void LevelEditorWindow::handleMgrUpdate()
 
 void LevelEditorWindow::scrollTo(int x, int y)
 {
-    qMax(0, x);
-    qMax(0, y);
     ui->levelViewArea->horizontalScrollBar()->setValue(x);
     ui->levelViewArea->verticalScrollBar()->setValue(y);
 }

@@ -2,7 +2,7 @@
 #define TILESETPALETTE_H
 
 #include "level.h"
-#include "objectseditionmode.h"
+#include "editionmode.h"
 
 #include <QWidget>
 #include <QListView>

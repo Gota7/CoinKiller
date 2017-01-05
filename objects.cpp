@@ -105,16 +105,6 @@ int BgdatObject::getType() const { return 0; }
 int BgdatObject::getid() const { return id; }
 int BgdatObject::getLayer() const { return layer; }
 
-void BgdatObject::setTsID(int tsID)
-{
-    id = (id & 0xFFF) | (tsID << 12);
-}
-
-void BgdatObject::setObjID(int objID)
-{
-    id = (id & 0xF000) | objID;
-}
-
 // Format: 0:ID:Layer:X:Y:Width:Height
 QString BgdatObject::toString(int xOffset, int yOffset) const { return QString("0:%1:%2:%3:%4:%5:%6").arg(id).arg(layer).arg(x+xOffset).arg(y+yOffset).arg(width).arg(height); }
 
@@ -138,16 +128,56 @@ Sprite::Sprite(Sprite *spr)
 
 void Sprite::setRect()
 {
+
+    extern bool ShowLiquid;
+    extern bool LemmyMode;
+    extern int zonewidth;
+
     width = 20;
     height = 20;
     offsetx = 0;
     offsety = 0;
     switch (id) {
+
+    if (LemmyMode == false) {
+
+    case 0: // Autoscroll
+        width = 20;
+        height = 20;
+        break;
+        case 1: // Pipe Boobles
+            width = 48;
+            height = 79;
+            offsetx = -4;
+            offsety = -79;
+            break;
+    case 2: // Booble
+        width = 20;
+        height = 20;
+        break;
     case 3: // Cheep Chomp
         width = 79;
         height = 67;
         offsetx = -31;
         offsety = -26;
+        break;
+    case 4: // Burner Right
+        width = 135;
+        height = 20;
+        break;
+    case 5: // Burner Down
+        width = 20;
+        height = 140;
+        break;
+    case 6: // Burner Left
+        width = 135;
+        height = 20;
+        offsetx = -115;
+        break;
+    case 7: // Burner Up
+        width = 20;
+        height = 140;
+        offsety = -120;
         break;
     case 8: // Swoop
         width = 13;
@@ -159,6 +189,25 @@ void Sprite::setRect()
         height = 57;
         offsetx = -18;
         offsety = 3;
+        break;
+    case 10: // Lemmy Conveyor
+        width = 280;
+        height = 20;
+        break;
+    case 12: // Lava
+        //vif(ShowLiquid){width = zonewidth;
+        //height = 48;}
+        if(ShowLiquid){width = 1000000000;
+        height = 48;}
+        else {width = 20; height = 20;}
+        break;
+    case 13: // Poison
+        if(ShowLiquid){width = 1000000000;
+        height = 48;} else {width = 20; height = 20;}
+        break;
+    case 15: // Water
+        if(ShowLiquid){width = 1000000000;
+        height = 48;} else {width = 20; height = 20;}
         break;
     case 18: // Tile God
         width = qMax(getNybble(15) * 20, 20);
@@ -174,11 +223,19 @@ void Sprite::setRect()
         width = qMax(getNybble(7) * 20, 20);
         height = qMax(getNybble(4) * 20, 20);
         break;
+    case 23: // Hidden Block Reggiesaurus
+        width = 20;
+        height = 20;
+        break;
     case 29: // Bob-omb
         width = 29;
         height = 29;
         offsetx = -5;
         offsety = -8;
+        break;
+    case 30: // Boss Controller
+        width = 20;
+        height = 20;
         break;
     case 31: case 32: case 33: // Boomerang/Fire/Hammer Bro.
         width = 27;
@@ -186,17 +243,86 @@ void Sprite::setRect()
         offsetx = -5;
         offsety = -13;
         break;
+        case 34: // Sledge Bro
+            width = 39;
+            height = 54;
+            offsety = 5;
+            break;
     case 35: // Lava Bubble
         width = 20;
         height = 21;
         offsety = 10;
         break;
+        case 38: // Reznor Wheel
+            width = 190;
+            height = 199;
+            offsetx = -85;
+            offsety = -99.5;
+            break;
+        case 39: // Reznor Platform
+            width = /*getNybble(4) * */20;
+            height = 20;
+            break;
+        case 49: // Chain
+            width = 8;
+            height = 114;
+            offsetx = 6;
+            offsety = 80;
+            break;
+        case 50: // Chain Controller
+            width = 20;
+            height = 20;
+            break;
     case 52: // Checkpoint Flag
         width = 37;
         height = 65;
         offsetx = 1;
         offsety = -25;
         break;
+    case 56: // Bubble Coin
+        width = 30;
+        height = 32;
+        offsetx = -5;
+        offsety = -6;
+        break;
+    case 57: // Coin Eruption
+        width = 60;
+        height = 60;
+        offsetx = -20;
+        offsety = -40;
+        break;
+    case 59: // Rotation Controlled Coin
+        width = 20;
+        height = 20;
+        break;
+    case 60: // Movement Controlled Coin
+        width = 20;
+        height = 20;
+        break;
+    case 61: // Red Coin
+        width = 18;
+        height = 20;
+        break;
+    case 62: // Rotating Red Coin
+        width = 18;
+        height = 20;
+        break;
+    case 63: // Left Skewer
+        width = 557;
+        height = 82;
+        offsetx = -278;
+        break;
+    case 64: // Right Skewer
+        width = 557;
+        height = 82;
+        offsetx = -260;
+        break;
+        case 65: // Respawn Pipe
+            width = 80;
+            height = 20;
+            offsetx = -40;
+            offsety = 10;
+            break;
     case 66: case 67: // Pipe Cannons
         width = 40;
         height = 80;
@@ -225,6 +351,10 @@ void Sprite::setRect()
         height = 60;
         offsety = -1;
         break;
+        case 74: // Flag Door
+            width = 43;
+            height = 60;
+            break;
     case 75: // Tower Boss Door
         width = 65;
         height = 75;
@@ -252,6 +382,11 @@ void Sprite::setRect()
         height = 21;
         offsetx = -4;
         break;
+    case 91: // Coin Coffer
+        width = 33;
+        height = 32;
+        offsety = -10;
+        break;
     case 92: // Grinder
         width = 49;
         height = 49;
@@ -263,30 +398,6 @@ void Sprite::setRect()
         height = 49;
         offsetx = -18;
         offsety = -21;
-        break;
-    case 94: // Flipper (One way gate)
-       if (getNybble(5) == 1 || getNybble(5) == 0) //Left Down + Right Down
-       {
-            width = 20;
-            height = 66;
-            offsety = -45;
-       }
-       else if (getNybble(5) == 2 || getNybble(5) == 3) //Right Up + Left Up
-       {
-            width = 20;
-            height = 66;
-       }
-       else if (getNybble(5) == 4 || getNybble(5) == 5) //Up Left + Down Left
-       {
-            width = 62;
-            height = 20;
-       }
-       else //Up Right + Down Right
-       {
-            width = 62;
-            height = 20;
-            offsetx = -42;
-       }
         break;
     case 95: // Blooper
         width = 28;
@@ -303,6 +414,11 @@ void Sprite::setRect()
         width = 89;
         height = 41;
         offsety = -20;
+        break;
+    case 102: // Iggy
+        width = 71;
+        height = 71;
+        offsety = 90;
         break;
     case 108: // Spider Web
         width = 80;
@@ -362,6 +478,26 @@ void Sprite::setRect()
         offsetx = -58;
         offsety = -87;
         break;
+    case 128: // Bowser
+        width = 136;
+        height = 103;
+        offsetx = -58;
+        offsety = -87;
+        break;
+    case 129: // Big Dry Bowser
+        width = 360;
+        height = 203;
+        offsetx = -160;
+        //Offset Y makes it make sense.
+        offsety = -320;
+        break;
+    case 130: // Big Bowser
+        width = 340;
+        height = 200;
+        offsetx = -150;
+        //Offset Y makes it make sense.
+        offsety = -320;
+        break;
     case 135: // Goomba
         width = 21;
         height = 24;
@@ -369,20 +505,10 @@ void Sprite::setRect()
         offsety = -4;
         break;
     case 136: // Bone Goomba
-        if (getNybble(14) != 1)
-        {
-            width = 22;
-            height = 24;
-            offsetx = -2;
-            offsety = -4;
-        }
-        else
-        {
-            width = 24;
-            height = 28;
-            offsetx = -2;
-            offsety = -8;
-        }
+        width = 22;
+        height = 24;
+        offsetx = -2;
+        offsety = -4;
         break;
     case 137: // Micro Goomba
         width = 11;
@@ -407,55 +533,45 @@ void Sprite::setRect()
         offsetx = -5;
         offsety = -6;
         break;
+    case 141: // Larry
+        width = 38;
+        height = 67;
+        offsety = 63;
+        break;
+    case 142: // LEMMAYYY!!!
+        width = 63;
+        height = 81;
+        offsety = -63;
+        offsetx = -20;
+        break;
     case 143: // 	Conveyor Belt Switch
         width = 28;
         height = 42;
         offsetx = -4;
         offsety = -21;
         break;
-    case 147: // 3 plat rickshaw
-        if (getNybble(5) != 1)
-        {
-            width = 128;
-            height = 89;
-            offsetx = -60;
-            offsety = -60;
-        }
-        else
-        {
-            width = 182;
-            height = 121;
-            offsetx = -90;
-            offsety = -80;
-        }
-        break;
-    case 148: //move While On Lift
-        width = 249;
-        height = 34;
-        offsetx = -6;
-        offsety = -6;
-        break;
     case 150: // Seesaw Lift
         width = 280;
         height = 20;
         offsetx= 20;
         break;
-    case 154: // 4 plat rickshaw
-        if (getNybble(5) == 1)
-        {
-            width = 116;
-            height = 90;
-            offsetx = -48;
-            offsety = -34;
-        }
-        else
-        {
-            width = 174;
-            height = 130;
-            offsetx = -40;
-            offsety = -54;
-        }
-        break;
+        case 153: // Platform Generator
+            width = 85;
+            height = 21;
+            offsetx = 0;
+            break;
+        case 155: // Ludwig Von Poopa
+            width = 38;
+            height = 54;
+            offsetx = -19;
+            offsety = -35;
+            break;
+        case 162: // Morton
+            width = 67;
+            height = 61;
+            offsetx = -33.5;
+            offsety = -30;
+            break;
     case 165: // Koopa Troopa
         width = 27;
         height = 35;
@@ -468,66 +584,10 @@ void Sprite::setRect()
         offsetx = 5;
         offsety = 40;
         break;
-    case 172: // Pipe Bone Piranha Plant - Up
-        width = 30;
-        height = 34;
-        offsetx = 5;
-        offsety = -35;
-        break;
-    case 173: // Pipe Bone Piranha Plant - Left
-        width = 34;
-        height = 30;
-        offsetx = -35;
-        offsety = 5;
-        break;
-    case 174: // Pipe Bone Piranha Plant - Right
-        width = 34;
-        height = 30;
-        offsetx = 40;
-        offsety = 5;
-        break;
     case 175: // Grounded Piranha Plant
         width = 54;
         height = 33;
         offsetx = -8;
-        break;
-    case 176: // Big Grounded Piranha plant
-        if (getNybble(5) != 1)
-        {
-            width = 110;
-            height = 65;
-            offsetx = -25;
-            offsety = 16;
-        }
-        else
-        {
-            width = 110;
-            height = 65;
-            offsetx = -25;
-            offsety = 60;
-        }
-        break;
-    case 179: // Grounded Bone Piranha Plant
-        width = 53;
-        height = 33;
-        offsetx = -8;
-        offsety = 8;
-        break;
-    case 180: // Big Grounded Bone Piranha plant
-        if (getNybble(5) != 1)
-        {
-            width = 110;
-            height = 68;
-            offsetx = -25;
-            offsety = 14;
-        }
-        else
-        {
-            width = 110;
-            height = 68;
-            offsetx = -25;
-            offsety = 58;
-        }
         break;
     case 181: // Pipe Piranha Plant - Left
         width = 37;
@@ -559,6 +619,12 @@ void Sprite::setRect()
         offsetx = -7;
         offsety = -15;
         break;
+        case 186: // Koopa Paratroopa Generator
+            width = 32;
+            height = 36;
+            offsetx = -7;
+            offsety = -15;
+            break;
     case 189: case 190: case 191: case 192: case 193: // Rect Blocks
         width = getNybble(15)*20+20;
         if (width == 20) width = 40;
@@ -584,11 +650,11 @@ void Sprite::setRect()
         height = 56;
         offsety = -5;
         break;
-    case 200: // Spiny Cheep Cheep
-        width = 20;
-        height = 26;
-        offsety = -6;
-        break;
+        case 200: // Spiny Cheep Cheep
+            width = 22;
+            height = 24;
+            offsety = -2;
+            break;
     case 205: // Red Ring
         width = 39;
         height = 56;
@@ -602,8 +668,18 @@ void Sprite::setRect()
     case 211: // Roy Koopa
         width = 78;
         height = 47;
-        offsetx = -46;
+        offsetx = -60;
         offsety = -27;
+        break;
+        case 212: // Roy Koopa's Dick
+            width = 41;
+            height = 200;
+            if (getNybble(5) == 1) {offsetx = 20;} else {offsetx = -41;}
+            break;
+    case 213: // Pokey
+        width = 36;
+        height = getNybble(5) * 24 + 13;
+        offsety = - height + 24 + 1;
         break;
     case 215: // Bob-omb Cannon
         width = 31;
@@ -612,7 +688,17 @@ void Sprite::setRect()
         else offsetx = -10;
         offsety = -12;
         break;
+    case 216: // Boss Shutter
+        width = 34;
+        height = 60;
+        offsety = 20;
+        offsetx = 3;
+        break;
     case 219: // Star Coin
+        width = 40;
+        height = 40;
+        break;
+    case 220: // Rotation Controlled Star Coin
         width = 40;
         height = 40;
         break;
@@ -634,17 +720,11 @@ void Sprite::setRect()
         offsetx = -1;
         if (getNybble(5) != 1) offsety = -4;
         break;
-    case 228: // Boo
-        width = 45;
-        height = 44;
-        offsetx = -12;
-        offsety = 5;
-        break;
-    case 229: //Big Boo
-        width = 132;
-        height = 132;
-        offsetx = -16;
-        offsety = 15;
+    case 231: // Boohemoth
+        width = 234;
+        height = 234;
+        //Makes sure boo is shown between zone lines.
+        offsety = -40;
         break;
     case 234: // Spiked Ball
         width = 38;
@@ -680,22 +760,38 @@ void Sprite::setRect()
             offsety = -4;
         }
         break;
-    case 244: // Chain Chomp
-        width = 63;
-        height = 63;
-        offsetx = -41;
+        case 245: // Wendy
+            width = 51;
+            height = 52;
+            offsetx = -25.5;
+            offsety = -31;
+            break;
+        case 246: // Wendy Water
+            width = 440;
+            height = 22;
+            offsetx = -20;
+            break;
+    case 247: // Invisible Trampoline Block
+        width = 20;
+        height = 20;
         break;
-    case 251: // Treasure Chest
-        width = 48;
-        height = 32;
-        offsetx = -14;
-        offsety = -12;
+    case 253: // Larry Koopa Floor Stage Platform Thing
+        if (getNybble(10)==3) {width = 60;} else {width = 80;}
+        height = 10;
         break;
     case 255: // Bowser Head Statue
         width = 40;
         height = 42;
         offsetx = -18;
         offsety = -1;
+        break;
+    case 257: // Spine Coaster
+        width = 326;
+        height = 84;
+        break;
+    case 266: // Flash Koopalings
+        width = 117;
+        height = 154;
         break;
     case 267: case 275: case 276: // Long Question Blocks
         width = 60;
@@ -710,6 +806,10 @@ void Sprite::setRect()
         height = 38;
         offsetx = 1;
         offsety = 1;
+        break;
+    case 272: // Peach Cage
+        width = 70;
+        height = 131;
         break;
     case 273: // Coin Roulette Block
         width = 31;
@@ -748,12 +848,17 @@ void Sprite::setRect()
         width = 40;
         height = 60;
         break;
-    case 289: // Bouncy Mushroom Platform - Castle
-        width = 98;
-        height = 35;
-        offsetx = -49;
-        offsety = 15;
-        break;
+        case 289: // Lemmy Mushroom
+            if (getNybble(15) == 0) {width = 99; offsetx = -50;} else {width = 40; offsetx = -10;}
+            height = 30;
+            offsety = 10;
+            break;
+        case 292: // Warp Cannon Signboard
+            width = 65;
+            height = 66;
+            offsetx = -22;
+            offsety = -46;
+            break;
     case 293: // Punching Glove
         width = 32;
         height = 35;
@@ -768,39 +873,67 @@ void Sprite::setRect()
         width = 25;
         height = 39;
         offsetx = -1;
-        offsety = -19;
+        offsety = -16;
+        break;
+    case 299: // Lemmy Fall Block
+        width = 40;
+        height = 20;
+        break;
+    case 300: // Clap Coin
+        width = 20;
+        height = 20;
         break;
     case 302: // Moon Coin
         width = 40;
         height = 40;
         break;
-    case 314: // Ruins rickshaw
-        if (getNybble(5) != 1)
-        {
-            width = 128;
-            height = 89;
-            offsetx = -60;
-            offsety = -60;
-        }
-        else
-        {
-            width = 166;
-            height = 110;
-            offsetx = -90;
-            offsety = -80;
-        }
+    case 303: // Rotato Moon Coin
+        width = 40;
+        height = 40;
         break;
+        case 310: //Evil Internet Bowser Lifts
+            width = 81;
+            height = 24;
+            offsetx = -40.5;
+            break;
+        case 311: //Coin Meteor
+            width = 60;
+            height = 60;
+            offsetx = -30;
+            offsety = -30;
+            break;
+    case 315: // Peach For Credits
+        width = 24;
+        height = 47;
+        break;
+        case 320: // Line Controlled Platform
+            width = 304;
+            height = 22;
+            offsetx = -290;
+            offsety = 20;
+            break;
     case 322: // Big Grinder
         width = 86;
         height = 86;
         offsetx = -23;
         offsety = -23;
         break;
+        case 323: // Ending Birds
+            width = 37;
+            height = 33;
+            offsetx = -18.5;
+            offsety = -16.5;
+            break;
+    }
     default:
-        width = 20;
-        height = 20;
-        offsetx = 0;
-        offsety = 0;
+        if (LemmyMode) {
+            width = 63;
+            height = 81;
+            offsety = -63.5;
+        } else {width = 20;
+            height = 20;
+            offsetx = 0;
+            offsety = 0;}
     }
 }
 
