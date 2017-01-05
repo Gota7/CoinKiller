@@ -27,7 +27,7 @@ TilesetEditorWindow::TilesetEditorWindow(QWidget *parent, Tileset *tileset, Sett
     loadTranslations();
 
     // Load UI Icons
-    QString basePath(QCoreApplication::applicationDirPath() + "/CoinKiller_data/icons/");
+    QString basePath(QCoreApplication::applicationDirPath() + "/coinkiller_data/icons/");
     ui->actionSave->setIcon(QIcon(basePath + "save.png"));
     ui->actionSetBackgroundColor->setIcon(QIcon(basePath + "colors.png"));
     ui->actionExportImage->setIcon(QIcon(basePath + "export.png"));
@@ -258,7 +258,7 @@ void TilesetEditorWindow::updateComboBox(int byteNbr, QList<parameter> &list, QC
 void TilesetEditorWindow::loadBehaviors()
 {
     QDomDocument xmlBehaviors;
-    QFile f(QCoreApplication::applicationDirPath() + "/CoinKiller_data/tilebehaviors.xml");
+    QFile f(QCoreApplication::applicationDirPath() + "/coinkiller_data/tilebehaviors.xml");
     if (!f.open(QIODevice::ReadOnly))
     {
         QMessageBox::warning(this, "CoinKiller", "Failed to load behaviors.xml");
@@ -372,7 +372,7 @@ void TilesetEditorWindow::setupObjectsModel(bool keepIndex)
 
     QStandardItemModel* objectsModel = new QStandardItemModel();
 
-    QString basePath(QCoreApplication::applicationDirPath() + "/CoinKiller_data/icons/");
+    QString basePath(QCoreApplication::applicationDirPath() + "/coinkiller_data/icons/");
 
     for (int i = 0; i < tileset->getNumObjects(); i++)
     {
@@ -950,7 +950,7 @@ void TilesetEditorWindow::on_actionExportImage_triggered()
 // temp function, using the SDK TGA to CTPK converter
 void TilesetEditorWindow::on_actionImportImage_triggered()
 {
-    QString convertDir(QCoreApplication::applicationDirPath() + "/CoinKiller_data/ts_convert/");
+    QString convertDir(QCoreApplication::applicationDirPath() + "/coinkiller_data/ts_convert/");
 
     if (!QFile(convertDir + "convert.exe").exists())
     {

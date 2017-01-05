@@ -26,14 +26,6 @@ LevelManager* Game::getLevelManager(QWidget* parent, QString path)
     return new LevelManager(parent, this, path);
 }
 
-LevelManager* Game::getFile(QWidget* parent, QString path)
-{
-    if (!fs->fileExists(path))
-        throw std::runtime_error("Level File does not exist.");
-
-    return new LevelManager(parent, this, path);
-}
-
 QStandardItemModel* Game::getCourseModel()
 {
     QStandardItemModel* model = new QStandardItemModel();
@@ -57,15 +49,19 @@ void Game::loadLevelNamesCat(QStandardItem* item, QDomElement node)
     {
         if (element.tagName() == "level")
         {
-            QStandardItem* subItem = new QStandardItem(element.attribute("name"));
-            subItem->setData(element.attribute("file"));
-            item->appendRow(subItem);
+            if (fs->fileExists("/Course/" + element.attribute("file") + ".sarc"))
+            {
+                QStandardItem* subItem = new QStandardItem(element.attribute("name"));
+                subItem->setData(element.attribute("file"));
+                item->appendRow(subItem);
+            }
         }
         else if (element.tagName() == "category")
         {
             QStandardItem* subItem = new QStandardItem(element.attribute("name"));
             loadLevelNamesCat(subItem, element);
-            item->appendRow(subItem);
+            if (subItem->rowCount() != 0)
+                item->appendRow(subItem);
         }
 
         element = element.nextSibling().toElement();
@@ -156,7 +152,7 @@ QStandardItemModel* Game::getTilesetModel(int id, bool includeNoneItem)
     headers << "Tileset" << "Filename";
     model->setHorizontalHeaderLabels(headers);
 
-    QFile inputFile(QCoreApplication::applicationDirPath() + "/CoinKiller_data/tilesetnames.txt");
+    QFile inputFile(QCoreApplication::applicationDirPath() + "/coinkiller_data/tilesetnames.txt");
     if (!inputFile.open(QIODevice::ReadOnly))
         return model;
 

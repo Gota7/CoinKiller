@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>957</width>
-    <height>622</height>
+    <width>1541</width>
+    <height>700</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
+   <layout class="QVBoxLayout" name="verticalLayout">
     <property name="spacing">
      <number>2</number>
     </property>
@@ -36,15 +36,38 @@
        <enum>Qt::Horizontal</enum>
       </property>
       <widget class="QWidget" name="sidebar" native="true">
-       <layout class="QHBoxLayout" name="horizontalLayout_6">
-        <property name="bottomMargin">
-         <number>0</number>
-        </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <widget class="QTabWidget" name="sidebarTabWidget">
-          <property name="currentIndex">
-           <number>-1</number>
+         <widget class="QSplitter" name="splitter_2">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
           </property>
+          <widget class="QTabWidget" name="sidebarTabWidget">
+           <property name="currentIndex">
+            <number>-1</number>
+           </property>
+          </widget>
+          <widget class="QScrollArea" name="miniMap">
+           <property name="verticalScrollBarPolicy">
+            <enum>Qt::ScrollBarAlwaysOff</enum>
+           </property>
+           <property name="horizontalScrollBarPolicy">
+            <enum>Qt::ScrollBarAlwaysOff</enum>
+           </property>
+           <property name="widgetResizable">
+            <bool>true</bool>
+           </property>
+           <widget class="QWidget" name="scrollAreaWidgetContents_3">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>1445</width>
+              <height>86</height>
+             </rect>
+            </property>
+           </widget>
+          </widget>
          </widget>
         </item>
        </layout>
@@ -59,7 +82,7 @@
           <x>0</x>
           <y>0</y>
           <width>69</width>
-          <height>556</height>
+          <height>634</height>
          </rect>
         </property>
        </widget>
@@ -73,7 +96,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>957</width>
+     <width>1541</width>
      <height>21</height>
     </rect>
    </property>
@@ -98,8 +121,6 @@
     <addaction name="separator"/>
     <addaction name="actionFullscreen"/>
     <addaction name="actionGrid"/>
-    <addaction name="actionLiquid"/>
-    <addaction name="actionLemmy_Mode"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
@@ -114,6 +135,7 @@
     <addaction name="actionLower"/>
     <addaction name="actionRaiseLayer"/>
     <addaction name="actionLowerLayer"/>
+    <addaction name="separator"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -121,6 +143,9 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="windowTitle">
     <string>toolBar</string>
    </property>
@@ -148,13 +173,13 @@
    <addaction name="separator"/>
    <addaction name="actionFullscreen"/>
    <addaction name="actionGrid"/>
-   <addaction name="actionLiquid"/>
    <addaction name="separator"/>
    <addaction name="actionToggleLayer1"/>
    <addaction name="actionToggleLayer2"/>
    <addaction name="separator"/>
    <addaction name="actionAddArea"/>
    <addaction name="actionDeleteCurrentArea"/>
+   <addaction name="separator"/>
   </widget>
   <action name="actionToggleLayer1">
    <property name="checkable">
@@ -365,22 +390,6 @@
    </property>
    <property name="toolTip">
     <string>&lt;Lower Layer&gt;</string>
-   </property>
-  </action>
-  <action name="actionLiquid">
-   <property name="text">
-    <string>Toggle Liquid</string>
-   </property>
-   <property name="toolTip">
-    <string>Toggle Liquid</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+L</string>
-   </property>
-  </action>
-  <action name="actionLemmy_Mode">
-   <property name="text">
-    <string>Lemmy Mode</string>
    </property>
   </action>
  </widget>

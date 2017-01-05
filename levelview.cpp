@@ -30,7 +30,6 @@
 #include <QClipboard>
 #include <QMessageBox>
 
-#include <QColorDialog>
 
 LevelView::LevelView(QWidget *parent, Level* level) : QWidget(parent)
 {
@@ -39,8 +38,8 @@ LevelView::LevelView(QWidget *parent, Level* level) : QWidget(parent)
     layerMask = 0x7; // failsafe
 
     setMouseTracking(true);
-    objectEditionMode = new ObjectsEditonMode(level);
-    mode = objectEditionMode;
+
+    setEditonMode(EditMode_ObjectsMode, true);
 
     zoom = 1;
     grid = false;
@@ -48,6 +47,7 @@ LevelView::LevelView(QWidget *parent, Level* level) : QWidget(parent)
 
 LevelView::~LevelView()
 {
+    mode->deactivate();
     delete objectEditionMode;
 }
 
@@ -59,7 +59,7 @@ void LevelView::paintEvent(QPaintEvent* evt)
     drawrect = QRect(evt->rect().x()/zoom, evt->rect().y()/zoom, evt->rect().width()/zoom+20, evt->rect().height()/zoom+20);
 
     //qDebug("draw %d,%d %d,%d", drawrect.x(), drawrect.y(), drawrect.width(), drawrect.height());
-    //QColor(119,136,153));
+
     painter.fillRect(drawrect, QColor(119,136,153));
     tileGrid.clear();
 
@@ -126,7 +126,7 @@ void LevelView::paintEvent(QPaintEvent* evt)
         if (!drawrect.intersects(sprRect))
             continue;
 
-        SpriteRenderer sprRend(spr);
+        SpriteRenderer sprRend(spr, level->tilesets);
         sprRend.render(&painter);
     }
 
@@ -234,17 +234,47 @@ void LevelView::paintEvent(QPaintEvent* evt)
         if (!drawrect.intersects(zonerect))
             continue;
 
+        // Render liquids (Might render them before sprites)
+        foreach (Sprite* s, level->sprites)
+        {
+            if (s->getid() != 12 && s->getid() != 13 && s->getid() != 15)
+                continue;
+
+            QColor liquidColor; // Might draw the actual texture in the future TODO
+
+            if (s->getid() == 12)
+                liquidColor = QColor(255, 60, 0, 100);
+            else if (s->getid() == 13)
+                liquidColor = QColor(255, 0, 190, 100);
+            else
+                liquidColor = QColor(0, 160, 255, 100);
+
+            if (zonerect.contains(s->getx(), s->gety(), false))
+            {
+                QRect liquidRect(QPoint(zone->getx(), s->gety()), QPoint(zone->getx() + zone->getwidth(), zone->gety() + zone->getheight()));
+                painter.fillRect(liquidRect, liquidColor);
+            }
+        }
+
         painter.setPen(QColor(255,255,255));
 
         painter.drawRect(zonerect);
 
         QString zoneText = QString("Zone %1").arg(zone->getid());
         painter.setFont(QFont("Arial", 8, QFont::Normal));
-        painter.drawText(zonerect.adjusted(3,3,0,0), zoneText);
+
+        int adjustX = 3;
+        int adjustY = 3;
+        if (zonerect.x() < drawrect.x())
+            adjustX += drawrect.x()-zonerect.x();
+        if (zonerect.y() < drawrect.y())
+            adjustY += drawrect.y()-zonerect.y();
+
+        painter.drawText(zonerect.adjusted(adjustX,adjustY,100,20), zoneText);
     }
 
-    // Render Selection
-    objectEditionMode->render(&painter);
+    // Render Edition Mode Stuff
+    mode->render(&painter);
 
     // Render Grid
     if (grid)
@@ -305,11 +335,15 @@ void LevelView::paintEvent(QPaintEvent* evt)
 
         painter.setRenderHint(QPainter::Antialiasing);
     }
+
+    emit updateMinimap(drawrect);
 }
 
 
 void LevelView::mousePressEvent(QMouseEvent* evt)
 {
+    setFocus();
+
     if (evt->buttons() & Qt::MiddleButton)
     {
         dragX = evt->x();
@@ -319,10 +353,12 @@ void LevelView::mousePressEvent(QMouseEvent* evt)
     if (mode != NULL)
     {
         if (evt->buttons() == Qt::LeftButton || evt->buttons() == Qt::RightButton)
-            mode->mouseDown(evt->x()/zoom, evt->y()/zoom, evt->buttons(), evt->modifiers());
+            mode->mouseDown(evt->x()/zoom, evt->y()/zoom, evt->buttons(), evt->modifiers(), drawrect);
         setCursor(QCursor(mode->getActualCursor()));
     }
     update();
+
+    emit updateMinimapBounds();
 }
 
 
@@ -343,13 +379,15 @@ void LevelView::mouseMoveEvent(QMouseEvent* evt)
 
         if (evt->buttons() == Qt::LeftButton || evt->buttons() == Qt::RightButton)
         {
-            mode->mouseDrag(x, y, evt->modifiers());
+            mode->mouseDrag(x, y, evt->modifiers(), drawrect);
         }
         else
             mode->mouseMove(x, y);
     }
     setCursor(QCursor(mode->getActualCursor()));
     update();
+
+    emit updateMinimapBounds();
 }
 
 void LevelView::mouseReleaseEvent(QMouseEvent *evt)
@@ -362,6 +400,11 @@ void LevelView::mouseReleaseEvent(QMouseEvent *evt)
 void LevelView::moveEvent(QMoveEvent *)
 {
     update();
+}
+
+void LevelView::keyPressEvent(QKeyEvent* evt)
+{
+    mode->keyPress(evt);
 }
 
 void LevelView::saveLevel()
@@ -383,6 +426,7 @@ void LevelView::paste()
 
     editionModePtr()->paste(x, y, w, h);
     update();
+    emit updateMinimapBounds();
 }
 
 void LevelView::raise()
@@ -413,6 +457,7 @@ void LevelView::cut()
 {
     editionModePtr()->cut();
     update();
+    emit updateMinimapBounds();
 }
 
 void LevelView::deleteSel()
@@ -420,6 +465,7 @@ void LevelView::deleteSel()
     mode->deleteSelection();
     setCursor(QCursor(mode->getActualCursor()));
     update();
+    emit updateMinimapBounds();
 }
 
 void LevelView::selectObj(Object *obj)
@@ -440,5 +486,27 @@ void LevelView::selectObj(Object *obj)
         emit scrollTo(sX, sY);
     }
 
+    update();
+}
+
+void LevelView::setEditonMode(EditMode newMode, bool init)
+{
+    if (init)
+    {
+        objectEditionMode = new ObjectsEditonMode(level);
+        connect(objectEditionMode, SIGNAL(updateLevelView()), this, SLOT(update()));
+    }
+    else
+        mode->deactivate();
+
+    switch (newMode)
+    {
+        case EditMode_ObjectsMode:
+        default:
+            mode = objectEditionMode;
+            break;
+    }
+
+    mode->activate();
     update();
 }

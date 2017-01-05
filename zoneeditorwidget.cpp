@@ -7,12 +7,6 @@
 #include <QPaintEvent>
 #include <QResizeEvent>
 
-#include <QTextStream>
-
-int zonewidth;
-
-int zoneheight;
-
 ZoneEditorWidget::ZoneEditorWidget(QList<Zone*> *zones, SettingsManager* settings)
 {
     this->zones = zones;
@@ -136,12 +130,6 @@ void ZoneEditorWidget::select(Zone *zone)
     editingAZone = true;
     updateInfo();
     zoneList->setCurrentRow(zones->indexOf(zone));
-
-    //Store zone width and height.
-        zonewidth = zone->getwidth();
-        zoneheight = zone->getheight();
-        QTextStream(stdout) << zonewidth << endl;
-        QTextStream(stdout) << zoneheight << endl;
 }
 
 void ZoneEditorWidget::updateEditor()
@@ -152,9 +140,9 @@ void ZoneEditorWidget::updateEditor()
 
 void ZoneEditorWidget::updateBgPreview()
 {
-    QFileInfo checkFile(QCoreApplication::applicationDirPath() + "/CoinKiller_data/backgrounds/" + editZone->getBgName() + ".png");
-    if (checkFile.exists() && checkFile.isFile()) backgroundPreview->setBg(QCoreApplication::applicationDirPath() + "/CoinKiller_data/backgrounds/" + editZone->getBgName() + ".png");
-    else backgroundPreview->setBg(QCoreApplication::applicationDirPath() + "/CoinKiller_data/backgrounds/Invalid.png");
+    QFileInfo checkFile(QCoreApplication::applicationDirPath() + "/coinkiller_data/backgrounds/" + editZone->getBgName() + ".png");
+    if (checkFile.exists() && checkFile.isFile()) backgroundPreview->setBg(QCoreApplication::applicationDirPath() + "/coinkiller_data/backgrounds/" + editZone->getBgName() + ".png");
+    else backgroundPreview->setBg(QCoreApplication::applicationDirPath() + "/coinkiller_data/backgrounds/Invalid.png");
 }
 
 void ZoneEditorWidget::loadMusicIDs()
@@ -200,7 +188,7 @@ void BgPreview::resizeEvent(QResizeEvent *)
 
 void ZoneEditorWidget::loadBackgrounds()
 {
-    QFile file(QCoreApplication::applicationDirPath() + "/CoinKiller_data/backgrounds/backgroundnames.txt");
+    QFile file(QCoreApplication::applicationDirPath() + "/coinkiller_data/backgrounds/backgroundnames.txt");
     if(!file.open(QIODevice::ReadOnly))
         return;
 
@@ -216,7 +204,6 @@ void ZoneEditorWidget::loadBackgrounds()
     file.close();
 }
 
-//This controls zone things.
 void ZoneEditorWidget::updateList()
 {
     QModelIndex index;

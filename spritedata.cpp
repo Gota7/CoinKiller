@@ -4,7 +4,7 @@ SpriteData::SpriteData()
 {
     // Load Sprite Definitions
     QDomDocument xmlSpriteData;
-    QFile f1(QCoreApplication::applicationDirPath() + "/CoinKiller_data/spritedata.xml");
+    QFile f1(QCoreApplication::applicationDirPath() + "/coinkiller_data/spritedata.xml");
     if (!f1.open(QIODevice::ReadOnly))
         return;
     xmlSpriteData.setContent(&f1);
@@ -20,11 +20,20 @@ SpriteData::SpriteData()
 
     // Load Sprite Views
     QDomDocument xmlSpriteViews;
-    QFile f2(QCoreApplication::applicationDirPath() + "/CoinKiller_data/spritecategories.xml");
+    QFile f2(QCoreApplication::applicationDirPath() + "/coinkiller_data/spritecategories.xml");
     if (!f2.open(QIODevice::ReadOnly))
         return;
     xmlSpriteViews.setContent(&f2);
     f2.close();
+
+    // Add "All (Sorted by Number)" View
+    spriteView allView;
+    allView.name = "All (Sorted by Number)";
+    foreach (SpriteDefinition sprDef, spriteDefs)
+    {
+        allView.simpleSprites.append(sprDef.getID());
+    }
+    spriteViews.append(allView);
 
     QDomNodeList views = xmlSpriteViews.documentElement().elementsByTagName("view");
     for (int v = 0; v < views.size(); v++)
@@ -66,16 +75,7 @@ SpriteData::SpriteData()
         }
 
         spriteViews.append(view);
-    }
-
-    // Add "All (Sorted by Number)" View
-    spriteView allView;
-    allView.name = "All (Sorted by Number)";
-    foreach (SpriteDefinition sprDef, spriteDefs)
-    {
-        allView.simpleSprites.append(sprDef.getID());
-    }
-    spriteViews.append(allView);
+    } 
 }
 
 SpriteDefinition::SpriteDefinition(QDomElement spriteElement)
@@ -105,7 +105,14 @@ SpriteDefinition::SpriteDefinition(QDomElement spriteElement)
         }
 
         if (fieldElement.tagName() == "value") field.type = Field::Value;
-        else if (fieldElement.tagName() == "checkbox") field.type = Field::Checkbox;
+
+        else if (fieldElement.tagName() == "checkbox")
+        {
+            field.type = Field::Checkbox;
+            quint32 mask = fieldElement.attribute("mask", "1").toUInt();
+            if (mask > 255) mask = 1;
+            field.mask = mask;
+        }
 
         else if (fieldElement.tagName() == "list")
         {

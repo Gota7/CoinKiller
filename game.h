@@ -17,7 +17,6 @@ public:
 
     Tileset* getTileset(QString name);
     LevelManager* getLevelManager(QWidget* parent, QString path);
-    LevelManager* getFile(QWidget* parent, QString path);
 
     QStandardItemModel* getCourseModel();
     QStandardItemModel* getTilesetModel();

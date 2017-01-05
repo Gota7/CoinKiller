@@ -103,7 +103,7 @@ void EntranceEditorWidget::select(Entrance* entr)
 
 void EntranceEditorWidget::loadEntranceTypes()
 {
-    QFile file(QCoreApplication::applicationDirPath() + "/CoinKiller_data/entrancetypes.txt");
+    QFile file(QCoreApplication::applicationDirPath() + "/coinkiller_data/entrancetypes.txt");
     if(!file.open(QIODevice::ReadOnly))
         return;
 

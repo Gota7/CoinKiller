@@ -43,11 +43,11 @@ SettingsManager::~SettingsManager()
 
 void SettingsManager::loadTranslations(QString languageName)
 {
-    QFile file(QCoreApplication::applicationDirPath() + "/CoinKiller_data/languages/"+languageName+"/translations.txt");
+    QFile file(QCoreApplication::applicationDirPath() + "/coinkiller_data/languages/"+languageName+"/translations.txt");
 
     if(!file.open(QIODevice::ReadOnly))
     {
-        QMessageBox::information(parentWidget, "CoinKiller", "The language \""+languageName+"\" is not present in the /CoinKiller_data/languages/ folder.\n\nEnglish will be selected as fallback language.");
+        QMessageBox::information(parentWidget, "CoinKiller", "The language \""+languageName+"\" is not present in the /coinkiller_data/languages/ folder.\n\nEnglish will be selected as fallback language.");
         loadTranslations("English");
     }
 
@@ -92,9 +92,9 @@ void SettingsManager::loadTranslations(QString languageName)
 
     foreach (QString transFile, translateFiles)
     {
-        QString path = QCoreApplication::applicationDirPath() + "/CoinKiller_data/languages/"+languageName+"/"+transFile;
+        QString path = QCoreApplication::applicationDirPath() + "/coinkiller_data/languages/"+languageName+"/"+transFile;
         if(!QFile(path).exists())
-            path = QCoreApplication::applicationDirPath() + "/CoinKiller_data/" + transFile;
+            path = QCoreApplication::applicationDirPath() + "/coinkiller_data/" + transFile;
 
         translatedFiles.insert(transFile, path);
     }
@@ -104,7 +104,7 @@ void SettingsManager::loadTranslations(QString languageName)
 
 QString SettingsManager::getTranslation(QString category, QString key)
 {
-    return translations.value(category, new QHash<QString, QString>)->value(key, "<NOT LOADED :P>");
+    return translations.value(category, new QHash<QString, QString>)->value(key, "<NOT LOADED>");
 }
 
 void SettingsManager::setupLanguageSelector(QListWidget* selector)
@@ -112,7 +112,7 @@ void SettingsManager::setupLanguageSelector(QListWidget* selector)
     selector->blockSignals(true);
     selector->clear();
 
-    QDir translationsFolder(QCoreApplication::applicationDirPath() + "/CoinKiller_data/languages/");
+    QDir translationsFolder(QCoreApplication::applicationDirPath() + "/coinkiller_data/languages/");
     translationsFolder.setFilter(QDir::NoDotAndDotDot | QDir::Dirs);
     QDirIterator directories(translationsFolder, QDirIterator::NoIteratorFlags);
 

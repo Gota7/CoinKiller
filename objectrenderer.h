@@ -2,6 +2,7 @@
 #define OBJECTRENDERER_H
 
 #include "objects.h"
+#include "tileset.h"
 
 #include <QPainter>
 
@@ -18,7 +19,7 @@ class SpriteRenderer: public ObjectRenderer
 {
 public:
     SpriteRenderer() {}
-    SpriteRenderer(const Sprite *spr);
+    SpriteRenderer(const Sprite *spr, Tileset *tilesets[]);
     void render(QPainter *painter);
 protected:
     const Sprite *spr;
@@ -52,31 +53,24 @@ protected:
 
 // Special Sprite Renderers
 
-// Lava
-class LavaRenderer: public SpriteRenderer
+// Sprite 18: Tile God
+class TileGodRenderer: public SpriteRenderer
 {
 public:
-    LavaRenderer(const Sprite *spr);
+    TileGodRenderer(const Sprite *spr, Tileset *tileset);
     void render(QPainter *painter);
 protected:
     const Sprite *spr;
+    Tileset *tileset;
+private:
+    int tileIds [12] = { 27, 20, 15, 24, 23, 23, 19, 41, 101, 94, 105, 131 };
 };
 
-// Poison
-class PoisonRenderer: public SpriteRenderer
+// Sprite 22: Special Exit Controller
+class SpecialExitControllerRenderer: public SpriteRenderer
 {
 public:
-    PoisonRenderer(const Sprite *spr);
-    void render(QPainter *painter);
-protected:
-    const Sprite *spr;
-};
-
-// Water
-class WaterRenderer: public SpriteRenderer
-{
-public:
-    WaterRenderer(const Sprite *spr);
+    SpecialExitControllerRenderer(const Sprite *spr);
     void render(QPainter *painter);
 protected:
     const Sprite *spr;
@@ -120,6 +114,16 @@ public:
     void render(QPainter *painter);
 protected:
     const Sprite *spr;
+};
+
+// Sprite 94: Flipper (One way gate)
+class FlipperRenderer: public SpriteRenderer
+{
+public:
+    FlipperRenderer(const Sprite *spr);
+    void render(QPainter *painter);
+protected:
+    NormalImageRenderer *img;
 };
 
 // Sprite 97: End of Level Flag
@@ -187,6 +191,16 @@ protected:
     const Sprite *spr;
 };
 
+// Sprite 136: Bone Goomba
+class BoneGoombaRenderer: public SpriteRenderer
+{
+public:
+    BoneGoombaRenderer(const Sprite *spr);
+    void render(QPainter *painter);
+protected:
+    const Sprite *spr;
+};
+
 // Sprite 139: Goomba Tower
 class GoombaTowerRenderer: public ObjectRenderer
 {
@@ -200,17 +214,26 @@ protected:
     NormalImageRenderer *bottom;
 };
 
-// Sprite 213: Pokey
-class PokeyRenderer: public ObjectRenderer
+// Sprite 147: 3 Plat Rickshaw
+class ThreePlatRickRenderer: public ObjectRenderer
 {
 public:
-    PokeyRenderer(const Sprite *spr);
+    ThreePlatRickRenderer(const Sprite *spr);
     void render(QPainter *painter);
 protected:
     const Object *obj;
-    NormalImageRenderer *top;
-    QList<NormalImageRenderer*> middle;
-    NormalImageRenderer *bottom;
+    NormalImageRenderer *img;
+};
+
+// Sprite 154: 4 Plat Rickshaw
+class FourPlatRickRenderer: public ObjectRenderer
+{
+public:
+    FourPlatRickRenderer(const Sprite *spr);
+    void render(QPainter *painter);
+protected:
+    const Object *obj;
+    NormalImageRenderer *img;
 };
 
 // Sprite 165: Koopa Troopa
@@ -268,6 +291,19 @@ protected:
     const Sprite *spr;
 };
 
+// Sprite 213: Pokey
+class PokeyRenderer: public ObjectRenderer
+{
+public:
+    PokeyRenderer(const Sprite *spr);
+    void render(QPainter *painter);
+protected:
+    const Object *obj;
+    NormalImageRenderer *top;
+    QList<NormalImageRenderer*> middle;
+    NormalImageRenderer *bottom;
+};
+
 // Sprite 215: Bob-omb Cannon
 class BobOmbCannonRenderer: public SpriteRenderer
 {
@@ -320,6 +356,16 @@ protected:
     const Sprite *spr;
 };
 
+// Sprite 244: Chain Chomp
+class ChainChompRenderer: public SpriteRenderer
+{
+public:
+    ChainChompRenderer(const Sprite *spr);
+    void render(QPainter *painter);
+protected:
+    const Sprite *spr;
+};
+
 // Sprites 267/275/276: Long ? Blocks
 class LongQBlockRenderer: public SpriteRenderer
 {
@@ -339,6 +385,17 @@ public:
     void render(QPainter *painter);
 protected:
     const Sprite *spr;
+};
+
+// Sprite 134: Ruins Plat Rickshaw
+class RuinsRickRenderer: public ObjectRenderer
+{
+public:
+    RuinsRickRenderer(const Sprite *spr);
+    void render(QPainter *painter);
+protected:
+    const Object *obj;
+    NormalImageRenderer *img;
 };
 
 class EntranceRenderer : public ObjectRenderer

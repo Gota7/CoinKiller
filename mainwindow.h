@@ -44,8 +44,6 @@ private slots:
 
     void on_actionLoadUnpackedROMFS_triggered();
 
-    //void on_actionOpen_From_File_triggered();
-
     void on_actionDebug_test_triggered();
 
     void on_levelList_doubleClicked(const QModelIndex &index);
@@ -53,6 +51,14 @@ private slots:
     void on_tilesetView_doubleClicked(const QModelIndex &index);
 
     void on_updateSpriteData_clicked();
+
+    void on_openSarcExplorerBtn_clicked();
+
+    void on_addTilesetBtn_clicked();
+
+    void on_removeTilesetBtn_clicked();
+
+    void on_tilesetView_clicked(const QModelIndex &index);
 
 private:
     Ui::MainWindow *ui;
@@ -63,6 +69,7 @@ private:
 
     FileDownloader* sdDownloader;
 
+    void setGameLoaded(bool loaded);
     bool startupClose = false;
     bool checkForMissingFiles();
     void loadTranslations();
